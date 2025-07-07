@@ -19,10 +19,25 @@ public class ZooUI {
         System.out.print("Choose an option: ");
     }
 
-    private static int readInt() {
-        int n = SCANNER.nextInt();
-        SCANNER.nextLine();
-        return n;
+    private static int readIntSafe() {
+        while (true) {
+            String line = SCANNER.nextLine();
+            try {
+                return Integer.parseInt(line.trim());
+            } catch (NumberFormatException e) {
+                System.out.print("Not a number, try again: ");
+            }
+        }
+    }
+
+    private static String readNonEmptyLine(String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String line = SCANNER.nextLine().trim();
+            if (!line.isEmpty())
+                return line;
+            System.out.println("Input cannot be empty, please try again.");
+        }
     }
 
     private static void preloadData() {
@@ -36,22 +51,22 @@ public class ZooUI {
         ANIMALS.add(ella);
 
         // --- enclosures ---
-        Enclosure lionsPen = new EnclosureLeo();
-        Enclosure elephantPen = new EnclosureElephant();
+        Enclosure leosEnclosure = new EnclosureLeo();
+        Enclosure elephantsEnclosure = new EnclosureElephant();
 
-        ENCLOSURES.add(lionsPen);
-        ENCLOSURES.add(elephantPen);
+        ENCLOSURES.add(leosEnclosure);
+        ENCLOSURES.add(elephantsEnclosure);
 
         // --- assign animals ---
-        lionsPen.addAnimal(leo);
-        lionsPen.addAnimal(nala);
-        elephantPen.addAnimal(ella);
+        leosEnclosure.addAnimal(leo);
+        leosEnclosure.addAnimal(nala);
+        elephantsEnclosure.addAnimal(ella);
     }
 
     public static void run() {
         while (true) {
             showMenu();
-            int choice = readInt();
+            int choice = readIntSafe();
 
             switch (choice) {
                 case 1 -> addInfoAnimal();
@@ -72,7 +87,7 @@ public class ZooUI {
             System.out.println(i + " → " + list.get(i));
         }
         System.out.print(prompt + " (index) : ");
-        int idx = readInt();
+        int idx = readIntSafe();
         if (idx < 0 || idx >= list.size()) {
             System.out.println("Invalid index.");
             return null;
@@ -80,8 +95,71 @@ public class ZooUI {
         return list.get(idx);
     }
 
+    private static void addInfoAnimal() {
+        Species species = Species.fromString(
+                readNonEmptyLine("Animal type (leo / elephant): ")
+        );
+        if (species == null) {
+            System.out.println("Unsupported animal type.");
+            return;
+        }
+
+        String name = readNonEmptyLine("Name: ");
+        System.out.print("Age : ");
+        int age = readIntSafe();
+
+        Animal animal = species.create(name, age, SCANNER);
+
+        if (animal != null) {
+            ANIMALS.add(animal);
+            System.out.println(animal.getName() + " created.");
+        }
+    }
+
+    private static void addInfoEnclosure() {
+        System.out.print("Enclosure type (leo / elephant): ");
+        Species species = Species.fromString(SCANNER.nextLine());
+
+        if (species == null) {
+            System.out.println("Unknown enclosure type.");
+            return;
+        }
+
+        switch (species) {
+            case LEO      -> ENCLOSURES.add(new EnclosureLeo());
+            case ELEPHANT -> ENCLOSURES.add(new EnclosureElephant());
+        }
+        System.out.println(species + " enclosure created.");
+    }
+
+    private static void addAnimalToEnclosure() {
+        if (ANIMALS.isEmpty() || ENCLOSURES.isEmpty()) {
+            System.out.println("Add at least one animal and one enclosure first.");
+            return;
+        }
+
+        Animal chosenAnimal = selectFromList(ANIMALS, "Animal");
+        Enclosure chosenEnclosure = selectFromList(ENCLOSURES, "Enclosure");
+
+        if (chosenAnimal != null && chosenEnclosure != null) {
+            chosenEnclosure.addAnimal(chosenAnimal);
+        }
+    }
+
+    private static void displayEnclosures() {
+        if (ENCLOSURES.isEmpty()) {
+            System.out.println("No enclosures yet.");
+            return;
+        }
+        ENCLOSURES.forEach(enclosure -> {
+            System.out.println("\n--- " + enclosure.getClass().getSimpleName() + " ---");
+            enclosure.showAnimals();
+        });
+    }
+
     public static void runDemo() {
         preloadData();
+        displayEnclosures();
         run();
     }
 }

@@ -17,4 +17,7 @@ public abstract class Animal {
         return name + " (" + age + " y)";
     }
 
+    public String getName() {
+        return name;
+    }
 }

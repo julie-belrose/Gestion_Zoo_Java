@@ -27,4 +27,9 @@ public class EnclosureElephant implements Enclosure {
             System.out.println(elephant.name);
         }
     };
+
+    @Override
+    public String toString() {
+        return "Elephant enclosure (" + elephants.size() + " animals)";
+    }
 }

@@ -27,4 +27,9 @@ public class EnclosureLeo implements Enclosure {
             System.out.println(leo.name);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Leo enclosure (" + leos.size() + " animals)";
+    }
 }
