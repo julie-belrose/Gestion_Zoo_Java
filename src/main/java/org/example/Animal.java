@@ -1,5 +1,16 @@
 package org.example;
 
-abstract class Animal {
+public abstract class Animal {
+    final String name;
+    final int age;
+
+    Animal(String name, int age){
+        this.name = name;
+        this.age = age;
+    }
+
+    public abstract void eat();
+    public abstract void sleep();
+    public abstract void makeSound();
 
 }
