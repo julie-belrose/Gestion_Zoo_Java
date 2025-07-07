@@ -13,4 +13,8 @@ public abstract class Animal {
     public abstract void sleep();
     public abstract void makeSound();
 
+    @Override public String toString() {
+        return name + " (" + age + " y)";
+    }
+
 }

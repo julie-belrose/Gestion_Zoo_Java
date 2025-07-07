@@ -23,4 +23,9 @@ public class Elephant extends Animal {
     public void makeSound() {
         System.out.println("Elephant" + name + " trumpets");
     }
+
+    @Override
+    public String toString() {
+        return name + " (" + age + " y, " + weight + " kg)";
+    }
 }

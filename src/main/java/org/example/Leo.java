@@ -20,4 +20,9 @@ public class Leo extends Animal{
     public void makeSound() {
         System.out.println("Leo" + name + " roars");
     }
+
+    @Override
+    public String toString() {
+        return name + " (" + age + ")";
+    }
 }
